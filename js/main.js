@@ -6,21 +6,19 @@ new Vue({
       emailsLoaded: false,
     };
   },
-  created() {
-    this.loadEmails();
+  async created() {
+    await this.loadEmails();
   },
 
   methods: {
     async loadEmails() {
-      const requests = [];
-      for (let i = 0; i < 10; i++) {
-        requests.push(
-          axios.get("https://flynn.boolean.careers/exercises/api/random/mail")
-        );
-      }
       try {
-        const responses = await Promise.all(requests);
-        this.emails = responses.map((response) => response.data.response);
+        const responses = await Promise.all(
+          Array.from({ length: 10 }, () =>
+            axios.get("https://flynn.boolean.careers/exercises/api/random/mail")
+          )
+        );
+        this.emails = responses.map((res) => res.data.response);
         this.emailsLoaded = true;
       } catch (error) {
         console.error("Errore durante il caricamento delle email:", error);
